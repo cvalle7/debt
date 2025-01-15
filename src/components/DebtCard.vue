@@ -2,7 +2,9 @@
     <div class="card-container" @click="popUp">
         <font-awesome-icon icon="money-bill-wave" class="icon" />
         <h2>{{ debt.name }}</h2>
-        <p>{{ debt.money }}€</p>
+        <div class="amount-side">
+            <p>{{ debt.money }}€</p>
+        </div>
     </div>
 </template>
 
@@ -60,5 +62,17 @@ export default {
     margin-left: 5%;
     color: green;
     font-size: 40px;
+}
+
+.amount-side{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: 3%;
+}
+
+.amount-side p{
+    font-size: large;
 }
 </style>
