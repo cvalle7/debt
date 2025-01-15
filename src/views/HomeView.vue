@@ -1,6 +1,6 @@
 <template>
     <div class="container-home">
-        <h1>Welcome to debt app</h1>
+        <h1 class="tittle">Welcome to debt app</h1>
         <div v-for="(debt, index) in cardList" :key="index" class="debt-container">
             <router-link to="/debt">
                 <DebtCard :debtObject="debt"/>
@@ -55,5 +55,9 @@ export default {
 .debt-container {
     width: 30%;
     margin-bottom: 1%;
+}
+
+.tittle{
+    margin: 4% 0;
 }
 </style>

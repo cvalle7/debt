@@ -1,5 +1,6 @@
 <template>
     <div class="container-debt">
+        <h1 class="tittle">{{ debt.name }}</h1>
         <div v-for="(people, index) in debt.people" :key="index" class="user-card">
             <UserCard :user="people" />
         </div>
@@ -64,5 +65,9 @@ export default {
 .user-card {
     width: 30%;
     margin-bottom: 1%;
+}
+
+.tittle{
+    margin: 4% 0;
 }
 </style>

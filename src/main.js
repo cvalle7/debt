@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { createPinia } from 'pinia';
 import piniaPersistedState from 'pinia-plugin-persistedstate';
 
@@ -13,6 +14,7 @@ import piniaPersistedState from 'pinia-plugin-persistedstate';
 library.add(faCoins);
 library.add(faMoneyBill);
 library.add(faMoneyBillWave);
+library.add(faCreditCard);
 
 const pinia = createPinia();
 const app = createApp(App);

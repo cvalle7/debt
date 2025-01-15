@@ -1,7 +1,10 @@
 <template>
     <div class="container-user-card">
+        <font-awesome-icon icon="credit-card" class="icon" />
         <h2>{{ user.name }}</h2>
-        <p class="amount" :class="[{'positive': user.value >= 0}, {'negative': user.value < 0}]">{{ user.value }}€</p>
+        <div class="amount-side">
+            <p class="amount" :class="[{'positive': user.value >= 0}, {'negative': user.value < 0}]">{{ user.value }}€</p>
+        </div>
     </div>
 </template>
 
@@ -39,5 +42,18 @@ export default {
 
 .negative{
     color: red;
+}
+
+.icon {
+    margin-left: 5%;
+    color: yellow;
+    font-size: 40px;
+}
+
+.amount-side{
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: 2%;
 }
 </style>
