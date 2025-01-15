@@ -1,26 +1,68 @@
 <template>
-    <div>
-        {{ debt }}
+    <div class="container-debt">
+        <div v-for="(people, index) in debt.people" :key="index" class="user-card">
+            <UserCard :user="people" />
+        </div>
     </div>
 </template>
 
 <script>
+import UserCard from '@/components/UserCard.vue';
+import useStoreDebt from '@/stores/debt.store';
+
 export default {
     name: 'DebtView',
-    props: {
-        debt: Object
+    methods: {
+        getValues() {
+
+            this.debt.people.map(p => {p.pay = 0; p.value = 0})
+
+            for (let pay of this.debt.pays) {
+                let payPart = pay.amount / pay.payFor.length
+
+                const payB = this.debt.people.filter(p => p.id === pay.payBy);
+                let userPay = payB[0];
+                userPay.pay += pay.amount;
+                userPay.value += pay.amount;
+
+                for(let pf of pay.payFor){
+                    const pFor = this.debt.people.filter(p => p.id === pf);
+                    let userPayFor = pFor[0];
+                    userPayFor.value -= payPart
+                }
+            }
+        }
     },
-    data() {
-        return {
-            number: 0
+    computed: {
+        debt() {
+            const debtStore = useStoreDebt();
+            return debtStore.debt;
         }
     },
     mounted() {
-        console.log('entro');
-        console.log(this.debt)
+        this.getValues()
+    },
+    components: {
+        UserCard
     }
 }
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.container-debt {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    background-color: rgb(70, 54, 54);
+    color: white;
+}
+
+.user-card {
+    width: 30%;
+    margin-bottom: 1%;
+}
+</style>

@@ -13,7 +13,6 @@ const routes = [
         name: 'Debt',
         component: DebtView,
         props: true
-
     }
 ]
 

@@ -6,20 +6,25 @@ const getAllDebt = () => {
             {
                 id: 1,
                 name: 'Carlos',
-                pay: 20,
-                debt: 180
+                pay: 0,
+                value: 0
             },
             {
                 id: 2,
                 name: 'Martín',
                 pay: 0,
-                debt: 0
+                value: 0
             },
             {
                 id: 3,
                 name: 'Paula',
-                pay: 380,
-                debt: 0
+                pay: 0,
+                value: 0
+            }, {
+                id: 4,
+                name: 'Arberto',
+                pay: 0,
+                value: 0
             }
         ],
         pays: [
@@ -37,6 +42,13 @@ const getAllDebt = () => {
                 payFor: [
                     1, 3
                 ]
+            }, {
+                payId: 3,
+                payBy: 4,
+                amount: 1200,
+                payFor: [
+                    3, 4
+                ]
             }
 
         ]
@@ -48,19 +60,19 @@ const getAllDebt = () => {
                 id: 1,
                 name: 'Carlos',
                 pay: 20,
-                debt: 180
+                value: -180
             },
             {
                 id: 2,
                 name: 'Martín',
                 pay: 0,
-                debt: 0
+                value: 0
             },
             {
                 id: 3,
                 name: 'Paula',
                 pay: 380,
-                debt: 0
+                value: 0
             }
         ],
         pays: [
@@ -89,19 +101,19 @@ const getAllDebt = () => {
                 id: 1,
                 name: 'Carlos',
                 pay: 20,
-                debt: 180
+                value: -180
             },
             {
                 id: 2,
                 name: 'Martín',
                 pay: 0,
-                debt: 0
+                value: 0
             },
             {
                 id: 3,
                 name: 'Paula',
                 pay: 380,
-                debt: 0
+                value: 0
             }
         ],
         pays: [
@@ -130,19 +142,19 @@ const getAllDebt = () => {
                 id: 1,
                 name: 'Carlos',
                 pay: 20,
-                debt: 180
+                value: -180
             },
             {
                 id: 2,
                 name: 'Martín',
                 pay: 0,
-                debt: 0
+                value: 0
             },
             {
                 id: 3,
                 name: 'Paula',
                 pay: 380,
-                debt: 0
+                value: 0
             }
         ],
         pays: [
@@ -166,8 +178,4 @@ const getAllDebt = () => {
     }]
 }
 
-const getOneDebt = () => {
-    console.log('hola one')
-}
-
-export default { getAllDebt, getOneDebt }
+export default { getAllDebt }

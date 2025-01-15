@@ -1,29 +1,40 @@
 <template>
     <div class="card-container" @click="popUp">
         <font-awesome-icon icon="money-bill-wave" class="icon" />
-        <h2>{{ debtObject.name }}</h2>
+        <h2>{{ debt.name }}</h2>
+        <p>{{ debt.money }}€</p>
     </div>
 </template>
 
 <script>
+import useStoreDebt from '@/stores/debt.store';
+
 export default {
     props: {
         debtObject: Object
     },
-    name: 'DebtCard',
     data() {
         return {
-            count: 0,
+            debt: Object
         }
     },
+    name: 'DebtCard',
     methods: {
         popUp() {
-            this.count++
-            if (this.count == 20) {
-                alert('Oye para ya no? Eres bastante gay');
-                this.count = 0;
+            const debtStore = useStoreDebt();
+            debtStore.setDebt(this.debt)
+        },
+        getAmount() {
+            this.debt = this.debtObject
+            let amount = 0;
+            for (let pay of this.debt.pays) {
+                amount += pay.amount;
             }
+            this.debt.money = amount;
         }
+    },
+    mounted() {
+        this.getAmount();
     }
 }
 
@@ -37,9 +48,8 @@ export default {
     align-items: center;
     gap: 20%;
     border-radius: 15px;
-    background-color: rgb(66, 54, 54);
+    background-color: rgb(27, 24, 24);
     transition: background-color 0.5s ease;
-
 }
 
 .card-container:hover {

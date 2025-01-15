@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
+    <div class="container-home">
         <h1>Welcome to debt app</h1>
         <div v-for="(debt, index) in cardList" :key="index" class="debt-container">
-            <router-link :to="{name: 'Debt', params: {debt: debt}}">
-                <DebtCard :debtObject="debt" />
+            <router-link to="/debt">
+                <DebtCard :debtObject="debt"/>
             </router-link>
         </div>
     </div>
@@ -12,6 +12,7 @@
 <script>
 import DebtCard from '@/components/DebtCard.vue';
 import debtService from '@/services/debt.service'
+import useStoreDebt from '@/stores/debt.store';
 
 export default {
     name: 'HomeView',
@@ -27,6 +28,10 @@ export default {
         getAll() {
             this.cardList = debtService.getAllDebt()
             debtService.getAllDebt();
+        },
+        selectDebt(debt) {
+            const debtStore = useStoreDebt();
+            debtStore.setDebt(debt);
         }
     },
     mounted() {
@@ -36,13 +41,15 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.container-home {
     height: 100vh;
     margin: 0;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
+    background-color: rgb(70, 54, 54);
+    color: white;
 }
 
 .debt-container {
