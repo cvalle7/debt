@@ -2,24 +2,36 @@
     <div class="container-debt">
         <h1 class="tittle">{{ debt.name }}</h1>
         <div class="subcontainer" :class="[{ 'hidden': saldosSelector == false }]">
-            <div v-for="(people, index) in debt.people" :key="index" class="user-card">
-                <UserCard :user="people" />
+            <div class="scroll-container">
+                <div v-for="(people, index) in debt.people" :key="index" class="user-card">
+                    <UserCard :user="people" />
+                </div>
             </div>
             <div class="selector">
-                <button :class="[{'selected': saldosSelector == true}]" class="selector-button" @click="changeSaldoSelector()">Saldos</button>
-                <button :class="[{'selected': gastosSelector == true}]" class="selector-button" @click="changeGastosSelector()">Gastos</button>
+                <button :class="[{ 'selected': saldosSelector == true }]" class="selector-button"
+                    @click="changeSaldoSelector()">Saldos</button>
+                <button :class="[{ 'selected': gastosSelector == true }]" class="selector-button"
+                    @click="changeGastosSelector()">Gastos</button>
             </div>
         </div>
         <div class="subcontainer" :class="[{ 'hidden': gastosSelector == false }]">
+            <div class="scroll-container">
+                <div v-for="(pay, index) in debt.pays" :key="index" class="user-card">
+                    <PayCard :pay="pay" :debt="debt" />
+                </div>
+            </div>
             <div class="selector">
-                <button :class="[{'selected': saldosSelector == true}]" class="selector-button" @click="changeSaldoSelector()">Saldos</button>
-                <button :class="[{'selected': gastosSelector == true}]" class="selector-button" @click="changeGastosSelector()">Gastos</button>
+                <button :class="[{ 'selected': saldosSelector == true }]" class="selector-button"
+                    @click="changeSaldoSelector()">Saldos</button>
+                <button :class="[{ 'selected': gastosSelector == true }]" class="selector-button"
+                    @click="changeGastosSelector()">Gastos</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import PayCard from '@/components/PayCard.vue';
 import UserCard from '@/components/UserCard.vue';
 import useStoreDebt from '@/stores/debt.store';
 
@@ -49,7 +61,7 @@ export default {
             this.gastosSelector = false;
             this.saldosSelector = true;
         },
-        changeGastosSelector(){
+        changeGastosSelector() {
             this.gastosSelector = true;
             this.saldosSelector = false;
         }
@@ -70,7 +82,8 @@ export default {
         this.getValues()
     },
     components: {
-        UserCard
+        UserCard,
+        PayCard
     }
 }
 
@@ -97,6 +110,7 @@ export default {
     border-radius: 15px;
     background-color: rgb(77, 71, 71);
     width: 50%;
+    height: 70vh;
 }
 
 .user-card {
@@ -120,9 +134,10 @@ export default {
     margin: 2% 0;
     border: 2px solid #EFEFEF;
     border-radius: 5px;
+    margin-top: auto;
 }
 
-.selector-button{
+.selector-button {
     color: white;
     background-color: #1B1818;
     display: flex;
@@ -134,14 +149,29 @@ export default {
     transition: background-color 0.5s ease;
 }
 
-.selector-button:hover{
+.selector-button:hover {
     background-color: #EFEFEF;
     cursor: pointer;
     color: black;
 }
 
-.selected{
+.selected {
     background-color: #EFEFEF;
     color: black;
+}
+
+.scroll-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    width: 100%;
+    height: 85%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
 }
 </style>

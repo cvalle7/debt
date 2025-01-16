@@ -29,7 +29,6 @@ export default {
     gap: 20%;
     border-radius: 15px;
     background-color: rgb(27, 24, 24);
-    transition: background-color 0.5s ease;
 }
 
 .amount{

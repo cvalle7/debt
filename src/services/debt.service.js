@@ -29,6 +29,7 @@ const getAllDebt = () => {
         ],
         pays: [
             {
+                name: 'pay 1',
                 payId: 1,
                 payBy: 3,
                 amount: 380,
@@ -36,6 +37,7 @@ const getAllDebt = () => {
                     1, 3
                 ]
             }, {
+                name: 'pay 2',
                 payId: 2,
                 payBy: 1,
                 amount: 20,
@@ -43,11 +45,66 @@ const getAllDebt = () => {
                     1, 3
                 ]
             }, {
+                name: 'pay 3',
                 payId: 3,
                 payBy: 4,
                 amount: 1200,
                 payFor: [
                     3, 4
+                ]
+            },
+            {
+                name: 'pay 4',
+                payId: 4,
+                payBy: 2,
+                amount: 380,
+                payFor: [
+                    1, 3
+                ]
+            },
+            {
+                name: 'pay 5',
+                payId: 5,
+                payBy: 2,
+                amount: 380,
+                payFor: [
+                    1, 3
+                ]
+            },
+            {
+                name: 'pay 6',
+                payId: 6,
+                payBy: 3,
+                amount: 380,
+                payFor: [
+                    2, 3
+                ]
+            },
+            {
+                name: 'pay 7',
+                payId: 7,
+                payBy: 2,
+                amount: 380,
+                payFor: [
+                    1, 3
+                ]
+            },
+            {
+                name: 'pay 8',
+                payId: 8,
+                payBy: 3,
+                amount: 2000,
+                payFor: [
+                    1, 4
+                ]
+            },
+            {
+                name: 'pay 9',
+                payId: 9,
+                payBy: 3,
+                amount: 380,
+                payFor: [
+                    2, 3
                 ]
             }
 
