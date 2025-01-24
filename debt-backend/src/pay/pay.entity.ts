@@ -9,9 +9,6 @@ export class Pay{
     @PrimaryColumn()
     id: number
 
-    @ManyToOne(() => Debt, (debt) => debt.pays, {onDelete: 'CASCADE'})
-    debt: Debt
-
     @Column({nullable: false})
     name: string
 
