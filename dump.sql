@@ -26,9 +26,9 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.debts (
     id integer NOT NULL,
-    name character(1) NOT NULL,
-    money integer,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    money integer NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -49,24 +49,14 @@ ALTER TABLE public.debts ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- Name: debts_users; Type: TABLE; Schema: public; Owner: debtuser
---
-
-CREATE TABLE public.debts_users (
-    debt_id integer NOT NULL,
-    user_id integer NOT NULL
-);
-
-
-ALTER TABLE public.debts_users OWNER TO debtuser;
-
---
 -- Name: pay_for; Type: TABLE; Schema: public; Owner: debtuser
 --
 
 CREATE TABLE public.pay_for (
     user_id integer NOT NULL,
-    pay_id integer NOT NULL
+    pay_id integer NOT NULL,
+    "paysId" integer,
+    "usersId" integer
 );
 
 
@@ -78,11 +68,10 @@ ALTER TABLE public.pay_for OWNER TO debtuser;
 
 CREATE TABLE public.pays (
     id integer NOT NULL,
-    debt_id integer NOT NULL,
     name character varying NOT NULL,
     amount integer NOT NULL,
-    pay_by integer NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    "payById" integer,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -103,13 +92,50 @@ ALTER TABLE public.pays ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
+-- Name: user; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."user" (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public."user" OWNER TO postgres;
+
+--
+-- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.user_id_seq OWNER TO postgres;
+
+--
+-- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: debtuser
 --
 
 CREATE TABLE public.users (
     id integer NOT NULL,
     name character varying NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    debt_id integer NOT NULL,
+    "debtId" integer
 );
 
 
@@ -130,18 +156,17 @@ ALTER TABLE public.users ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
+-- Name: user id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
+
+
+--
 -- Data for Name: debts; Type: TABLE DATA; Schema: public; Owner: debtuser
 --
 
-COPY public.debts (id, name, money, created_at) FROM stdin;
-\.
-
-
---
--- Data for Name: debts_users; Type: TABLE DATA; Schema: public; Owner: debtuser
---
-
-COPY public.debts_users (debt_id, user_id) FROM stdin;
+COPY public.debts (id, money, name, created_at) FROM stdin;
 \.
 
 
@@ -149,7 +174,7 @@ COPY public.debts_users (debt_id, user_id) FROM stdin;
 -- Data for Name: pay_for; Type: TABLE DATA; Schema: public; Owner: debtuser
 --
 
-COPY public.pay_for (user_id, pay_id) FROM stdin;
+COPY public.pay_for (user_id, pay_id, "paysId", "usersId") FROM stdin;
 \.
 
 
@@ -157,7 +182,15 @@ COPY public.pay_for (user_id, pay_id) FROM stdin;
 -- Data for Name: pays; Type: TABLE DATA; Schema: public; Owner: debtuser
 --
 
-COPY public.pays (id, debt_id, name, amount, pay_by, created_at) FROM stdin;
+COPY public.pays (id, name, amount, "payById", created_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."user" (id, name, created_at) FROM stdin;
 \.
 
 
@@ -165,7 +198,7 @@ COPY public.pays (id, debt_id, name, amount, pay_by, created_at) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: debtuser
 --
 
-COPY public.users (id, name, created_at) FROM stdin;
+COPY public.users (id, name, created_at, debt_id, "debtId") FROM stdin;
 \.
 
 
@@ -184,10 +217,25 @@ SELECT pg_catalog.setval('public.pays_id_seq', 1, false);
 
 
 --
+-- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_id_seq', 1, false);
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: debtuser
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 1, true);
+
+
+--
+-- Name: user PK_cace4a159ff9f2512dd42373760; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY (id);
 
 
 --
@@ -196,14 +244,6 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 ALTER TABLE ONLY public.debts
     ADD CONSTRAINT debts_pkey PRIMARY KEY (id);
-
-
---
--- Name: debts_users debts_users_pkey; Type: CONSTRAINT; Schema: public; Owner: debtuser
---
-
-ALTER TABLE ONLY public.debts_users
-    ADD CONSTRAINT debts_users_pkey PRIMARY KEY (debt_id, user_id);
 
 
 --
@@ -231,51 +271,35 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: debts_users debts_users_debts_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
+-- Name: users FK_413be968c829d58976045593787; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
 --
 
-ALTER TABLE ONLY public.debts_users
-    ADD CONSTRAINT debts_users_debts_fk FOREIGN KEY (debt_id) REFERENCES public.debts(id) ON DELETE CASCADE;
-
-
---
--- Name: debts_users debts_users_users_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
---
-
-ALTER TABLE ONLY public.debts_users
-    ADD CONSTRAINT debts_users_users_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT "FK_413be968c829d58976045593787" FOREIGN KEY ("debtId") REFERENCES public.debts(id) ON DELETE CASCADE;
 
 
 --
--- Name: pay_for pay_for_pays_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
---
-
-ALTER TABLE ONLY public.pay_for
-    ADD CONSTRAINT pay_for_pays_fk FOREIGN KEY (pay_id) REFERENCES public.pays(id) ON DELETE CASCADE;
-
-
---
--- Name: pay_for pay_for_user_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
---
-
-ALTER TABLE ONLY public.pay_for
-    ADD CONSTRAINT pay_for_user_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
--- Name: pays pays_debt_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
+-- Name: pays FK_68c6901e6768f0e33a8669b2a02; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
 --
 
 ALTER TABLE ONLY public.pays
-    ADD CONSTRAINT pays_debt_fk FOREIGN KEY (debt_id) REFERENCES public.debts(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_68c6901e6768f0e33a8669b2a02" FOREIGN KEY ("payById") REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
--- Name: pays pays_users_fk; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
+-- Name: pay_for FK_b73b34ce2809dce7f906d301bf8; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
 --
 
-ALTER TABLE ONLY public.pays
-    ADD CONSTRAINT pays_users_fk FOREIGN KEY (pay_by) REFERENCES public.users(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.pay_for
+    ADD CONSTRAINT "FK_b73b34ce2809dce7f906d301bf8" FOREIGN KEY ("usersId") REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pay_for FK_cf15326ac9fc81ff3bc42453b67; Type: FK CONSTRAINT; Schema: public; Owner: debtuser
+--
+
+ALTER TABLE ONLY public.pay_for
+    ADD CONSTRAINT "FK_cf15326ac9fc81ff3bc42453b67" FOREIGN KEY ("paysId") REFERENCES public.pays(id) ON DELETE CASCADE;
 
 
 --
