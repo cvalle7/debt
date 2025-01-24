@@ -12,7 +12,6 @@ export class UserService {
     ) { }
 
     async getUsers(): Promise<User[]> {
-        console.log('hopla')
         return this.userRepository.find();
     }
 }
