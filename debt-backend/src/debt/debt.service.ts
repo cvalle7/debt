@@ -28,7 +28,7 @@ export class DebtService {
                 }
             });
             if (debt) {
-                return debt[0];
+                return this.orderResults(debt[0]);
             }
         } catch (err) {
             throw new Error(err.message);
@@ -37,7 +37,7 @@ export class DebtService {
 
     async getDebts() {
         try {
-            return await this.debtRepository.find({
+            const results = await this.debtRepository.find({
                 relations: {
                     users: {
                         pay: true,
@@ -48,6 +48,11 @@ export class DebtService {
                     }
                 }
             });
+            let res = [];
+            for (let r of results) {
+                res.push(this.orderResults(r));
+            }
+            return res;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -80,26 +85,33 @@ export class DebtService {
         let users = [];
         let pays = [];
         let payFor = [];
-        for(let user of debt.users){
+        for (let user of debt.users) {
             let u = {
                 id: user.id,
                 name: user.name,
                 created_at: user.created_at
             }
             users.push(u);
-            if(user.pay && user.pay.lengt > 0){
-                for(let p of user.pay){
-                    pays.push(p);
-                }
+
+            for (let p of user.pay) {
+                pays.push(p);
             }
 
-            if(user.pay_for && user.pay_for.lengt > 0){
-                for(let p of user.pay_for){
-                    payFor.push(p);
-                }
+            for (let p of user.pay_for) {
+                payFor.push(p);
+            }
+
+        }
+
+        for (let p of pays) {
+            const findPays = payFor.filter(pf => pf.pay_id == p.id);
+            if (findPays.length > 0) {
+                p.pay_for = findPays
             }
         }
 
-        //buscar pay for por cada pay
+        result.users = users;
+        result.pays = pays;
+        return result;
     }
 }
