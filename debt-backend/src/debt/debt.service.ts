@@ -22,6 +22,9 @@ export class DebtService {
             const newUser = await this.userService.createUsers(u);
             newUsers.push(newUser);
         }
-        return newDebt
+        return await this.debtRepository.find({
+            where: {id: newDebt.id},
+            relations:{users: true}
+        });
     }
 }
