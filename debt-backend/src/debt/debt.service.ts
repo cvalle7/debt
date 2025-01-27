@@ -14,14 +14,42 @@ export class DebtService {
         private readonly userService: UserService
     ) { }
 
-    async getDebt(debt_id){
-        try{
-            const debt =  await this.debtRepository.findBy({id: debt_id});
-            if(debt){
+    async getDebt(debt_id) {
+        try {
+            const debt = await this.debtRepository.find({
+                where: { id: debt_id }, relations: {
+                    users: {
+                        pay: true,
+                        pay_for: {
+                            users: true,
+                            pays: true
+                        }
+                    }
+                }
+            });
+            if (debt) {
                 return debt[0];
             }
-        }catch(err){
+        } catch (err) {
             throw new Error(err.message);
+        }
+    }
+
+    async getDebts() {
+        try {
+            return await this.debtRepository.find({
+                relations: {
+                    users: {
+                        pay: true,
+                        pay_for: {
+                            users: true,
+                            pays: true
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            throw new Error(error.message);
         }
     }
 
@@ -34,8 +62,8 @@ export class DebtService {
             newUsers.push(newUser);
         }
         return await this.debtRepository.find({
-            where: {id: newDebt.id},
-            relations:{users: true}
+            where: { id: newDebt.id },
+            relations: { users: true }
         });
     }
 }

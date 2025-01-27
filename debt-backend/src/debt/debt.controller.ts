@@ -8,10 +8,19 @@ export class DebtController {
 
     constructor(private readonly debtService: DebtService) { }
 
-    @Get()
+    @Get('find-one')
     async getDebt(@Param('id') id: number){
         try {
             return await this.debtService.getDebt(id);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    @Get()
+    async getDebts(){
+        try {
+            return await this.debtService.getDebts();
         } catch (error) {
             throw new Error(error.message);
         }
