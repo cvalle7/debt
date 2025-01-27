@@ -72,6 +72,16 @@ export class DebtService {
         });
     }
 
+    async updateDebt(debt: Debt) {
+        try {
+            const id = debt.id
+            delete debt.id;
+            return await this.debtRepository.update({ id: id }, debt);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     private orderResults(debt) {
         let result = {
             id: debt.id,

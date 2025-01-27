@@ -14,7 +14,7 @@ export class UserService {
 
     async getUserById(user_id: number){
         try {
-            const user =  await this.userRepository.findBy({id: user_id});
+            const user =  await this.userRepository.find({where: {id: user_id}, relations: {debt: true}});
             if(user){
                 return user[0];
             }
