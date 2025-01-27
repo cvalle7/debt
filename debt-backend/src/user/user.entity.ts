@@ -10,9 +10,6 @@ export class User{
     id: number
 
     @Column({nullable: false})
-    debt_id: number
-
-    @Column({nullable: false})
     name: string
 
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})

@@ -1,16 +1,16 @@
 import { User } from "src/user/user.entity";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('debts')
 export class Debt{
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @Column({nullable: false})
     name: string
 
-    @Column()
+    @Column({default: 0})
     money: number
 
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})

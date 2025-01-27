@@ -1,12 +1,12 @@
 import { Debt } from "src/debt/debt.entity";
 import { PayFor } from "src/pay_for/pay_for.entity";
 import { User } from "src/user/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('pays')
 export class Pay{
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @Column({nullable: false})
