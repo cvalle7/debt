@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { DebtService } from './debt.service';
 import { Debt } from './debt.entity';
 import { User } from 'src/user/user.entity';
@@ -7,6 +7,15 @@ import { User } from 'src/user/user.entity';
 export class DebtController {
 
     constructor(private readonly debtService: DebtService) { }
+
+    @Get()
+    async getDebt(@Param('id') id: number){
+        try {
+            return await this.debtService.getDebt(id);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 
     @Post()
     async createDebt(@Body() inputData: { debt: Debt, users: User[] }) {

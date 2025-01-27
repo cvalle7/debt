@@ -14,6 +14,17 @@ export class DebtService {
         private readonly userService: UserService
     ) { }
 
+    async getDebt(debt_id){
+        try{
+            const debt =  await this.debtRepository.findBy({id: debt_id});
+            if(debt){
+                return debt[0];
+            }
+        }catch(err){
+            throw new Error(err.message);
+        }
+    }
+
     async createDebt(debt: Debt, users: User[]) {
         const newDebt = await this.debtRepository.save(debt);
         const newUsers = [];
