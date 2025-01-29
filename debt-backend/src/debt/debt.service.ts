@@ -19,7 +19,9 @@ export class DebtService {
             const debt = await this.debtRepository.find({
                 where: { id: debt_id }, relations: {
                     users: {
-                        pay: true,
+                        pay: {
+                            pay_by: true
+                        },
                         pay_for: {
                             users: true,
                             pays: true
@@ -40,7 +42,9 @@ export class DebtService {
             const results = await this.debtRepository.find({
                 relations: {
                     users: {
-                        pay: true,
+                        pay: {
+                            pay_by: true
+                        },
                         pay_for: {
                             users: true,
                             pays: true
