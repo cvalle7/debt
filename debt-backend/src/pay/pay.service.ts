@@ -26,13 +26,16 @@ export class PayService {
             for (let pf of pay_for) {
                 await this.payForService.createPayFor(pf, p.id);
             }
-            await this.debtService.updateDebt(user.debt);
+            await this.updateDebt(user.debt);
             const pays = await this.payRepository.find({
                 where: { id: pay.id }, relations: {
-                    pay_for: true,
+                    pay_for: {
+                        users: true
+                    },
                     pay_by: true
                 }
-            })
+            });
+            return pays[0];
         } catch (err) {
             throw new Error(err.message)
         }

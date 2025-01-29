@@ -74,9 +74,12 @@ export class DebtService {
 
     async updateDebt(debt: Debt) {
         try {
-            const id = debt.id
-            delete debt.id;
-            return await this.debtRepository.update({ id: id }, debt);
+            const d = await this.debtRepository.find({where: {id: debt.id}});
+            if(d[0]){
+                d[0].money = debt.money;
+                delete d[0].id;
+                return await this.debtRepository.update({ id: debt.id }, d[0]);
+            }
         } catch (error) {
             throw new Error(error.message);
         }
