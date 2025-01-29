@@ -17,13 +17,13 @@
                 </div>
                 <label class="label-tittle" :for="selector">Pay by:</label>
                 <select class="separator" v-model="payBy">
-                    <option v-for="(people, index) in debt.people" :key="index" :value="people.id">
+                    <option v-for="(people, index) in debt.users" :key="index" :value="people.id">
                         {{ people.name }}
                     </option>
                 </select>
                 <div class="separator">
                     <label class="label-tittle">Pay for:</label>
-                    <div v-for="(people, index) in debt.people" :key=index>
+                    <div v-for="(people, index) in debt.users" :key=index>
                         <label :for="people.id">{{ people.name }}</label>
                         <input :id="people.id" type="checkbox" :value="people.id" v-model="payFor" />
                     </div>
@@ -40,7 +40,7 @@
 
         <div class="subcontainer" :class="[{ 'hidden': saldosSelector == false }]">
             <div class="scroll-container">
-                <div v-for="(people, index) in debt.people" :key="index" class="user-card">
+                <div v-for="(people, index) in debt.users" :key="index" class="user-card">
                     <UserCard :user="people" />
                 </div>
             </div>
@@ -82,6 +82,7 @@ import PayModal from '@/components/modals/PayModal.vue';
 import PayCard from '@/components/PayCard.vue';
 import UserCard from '@/components/UserCard.vue';
 import useStoreDebt from '@/stores/debt.store';
+import debtService from '@/services/debt.service'
 
 export default {
     name: 'DebtView',
@@ -100,16 +101,18 @@ export default {
         closeModal() {
             this.isVisible = false
         },
-        addPay() {
+        async addPay() {
             if (this.payFor.length > 0 && this.importData > 0) {
                 const pay = {
-                    name: this.tittle,
-                    payId: this.debt.pays.length+1,
-                    payBy: this.payBy,
-                    amount: this.importData,
+                    pay: {
+                        name: this.tittle,
+                        amount: this.importData,
+                    },
+                    pay_by: this.payBy,
                     payFor: this.payFor
                 }
-                this.debt.pays.push(pay);
+                //new line
+                await debtService.createPay(pay);
             }
             this.isVisible = false;
         }
@@ -117,18 +120,18 @@ export default {
     computed: {
         debt() {
             const debtStore = useStoreDebt();
-            debtStore.debt.people.map(p => { p.pay = 0; p.value = 0 })
+            debtStore.debt.users.map(p => { p.pay = 0; p.value = 0 })
 
             for (let pay of debtStore.debt.pays) {
-                let payPart = pay.amount / pay.payFor.length
+                let payPart = pay.amount / pay.pay_for.length
 
-                const payB = debtStore.debt.people.filter(p => p.id === pay.payBy);
+                const payB = debtStore.debt.users.filter(p => p.id === pay.pay_by.id);
                 let userPay = payB[0];
                 userPay.pay += pay.amount;
                 userPay.value += pay.amount;
 
-                for (let pf of pay.payFor) {
-                    const pFor = debtStore.debt.people.filter(p => p.id === pf);
+                for (let pf of pay.pay_for) {
+                    const pFor = debtStore.debt.users.filter(p => p.id === pf.user_id);
                     let userPayFor = pFor[0];
                     userPayFor.value -= payPart
                 }

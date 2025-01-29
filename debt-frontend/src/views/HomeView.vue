@@ -62,8 +62,8 @@ export default {
         }
     },
     methods: {
-        getAll() {
-            this.cardList = debtService.getAllDebt();
+        async getAll() {
+            this.cardList = await debtService.getAllDebt();
         },
         selectDebt(debt) {
             const debtStore = useStoreDebt();

@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         getData() {
-            let people = this.debt.people.filter(p => p.id === this.pay.payBy);
+            let people = this.debt.users.filter(p => p.id === this.pay.pay_by.id);
             this.payer = people[0];
         }
     },

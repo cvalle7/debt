@@ -1,9 +1,9 @@
 <template>
     <div class="card-container" @click="popUp">
         <font-awesome-icon icon="money-bill-wave" class="icon" />
-        <h2>{{ debt.name }}</h2>
+        <h2>{{ debtObject.name }}</h2>
         <div class="amount-side">
-            <p>{{ debt.money }}€</p>
+            <p>{{ debtObject.money }}€</p>
         </div>
     </div>
 </template>
@@ -15,29 +15,13 @@ export default {
     props: {
         debtObject: Object
     },
-    data() {
-        return {
-            debt: Object
-        }
-    },
     name: 'DebtCard',
     methods: {
         popUp() {
             const debtStore = useStoreDebt();
-            debtStore.setDebt(this.debt)
-        },
-        getAmount() {
-            this.debt = this.debtObject
-            let amount = 0;
-            for (let pay of this.debt.pays) {
-                amount += pay.amount;
-            }
-            this.debt.money = amount;
+            debtStore.setDebt(this.debtObject)
         }
     },
-    mounted() {
-        this.getAmount();
-    }
 }
 
 </script>
