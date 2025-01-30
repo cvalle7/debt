@@ -2,11 +2,11 @@ import { defineStore } from "pinia";
 
 const useStoreDebt = defineStore('debtStore', {
     state: () => ({
-        debt: null,
+        debt_id: null,
     }),
     actions: {
-        setDebt(newDebt) {
-            this.debt = newDebt
+        setDebt(debt_id) {
+            this.debt_id = debt_id
         }
     },
     persist: true

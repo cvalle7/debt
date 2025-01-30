@@ -8,9 +8,9 @@ export class PayController {
     constructor(private readonly payService: PayService) { }
 
     @Post()
-    async createPay(@Body() inputData: { pay: Pay, pay_by: number, pay_for: number[] }) {
-        const { pay, pay_by, pay_for } = inputData;
+    async createPay(@Body() inputData) {
         try {
+            const { pay, pay_by, pay_for } = inputData.data;
             return await this.payService.createPay(pay, pay_by, pay_for);
         } catch (err) {
             throw new Error(err.message);

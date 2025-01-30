@@ -1,11 +1,9 @@
 <template>
-    <div class="container-debt">
+    <div v-if="debt" class="container-debt">
         <h1 class="tittle">{{ debt.name }}</h1>
 
-
-
         <PayModal :visible="isVisible" @close="closeModal">
-            <form class="modal-content" @submit="addPay">
+            <form class="modal-content" @submit.prevent="addPay">
                 <h1>Add pay</h1>
                 <div class="separator">
                     <label class="label-tittle" :for="tittle">Tittle</label>
@@ -77,86 +75,87 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import PayModal from '@/components/modals/PayModal.vue';
 import PayCard from '@/components/PayCard.vue';
 import UserCard from '@/components/UserCard.vue';
 import useStoreDebt from '@/stores/debt.store';
 import debtService from '@/services/debt.service'
+import { onMounted, ref } from 'vue';
 
-export default {
-    name: 'DebtView',
-    methods: {
-        changeSaldoSelector() {
-            this.gastosSelector = false;
-            this.saldosSelector = true;
-        },
-        changeGastosSelector() {
-            this.gastosSelector = true;
-            this.saldosSelector = false;
-        },
-        openModal() {
-            this.isVisible = true
-        },
-        closeModal() {
-            this.isVisible = false
-        },
-        async addPay() {
-            if (this.payFor.length > 0 && this.importData > 0) {
-                const pay = {
-                    pay: {
-                        name: this.tittle,
-                        amount: this.importData,
-                    },
-                    pay_by: this.payBy,
-                    payFor: this.payFor
-                }
-                //new line
-                await debtService.createPay(pay);
+const gastosSelector = ref(false);
+const saldosSelector = ref(true);
+const isVisible = ref(false);
+const tittle = ref('');
+const payBy = ref(0);
+const payFor = ref([]);
+const importData = ref(0);
+const debt = ref();
+
+const changeSaldoSelector = () => {
+    gastosSelector.value = false;
+    saldosSelector.value = true;
+};
+const changeGastosSelector = () => {
+    gastosSelector.value = true;
+    saldosSelector.value = false;
+};
+const openModal = () => {
+    isVisible.value = true
+};
+
+const closeModal = () => {
+    isVisible.value = false
+};
+
+const addPay = async () => {
+    try {
+        if (payFor.value.length > 0 && importData.value > 0) {
+            const pay = {
+                pay: {
+                    name: tittle.value,
+                    amount: importData.value,
+                },
+                pay_by: payBy.value,
+                pay_for: [...payFor.value]
             }
-            this.isVisible = false;
+            await debtService.createPay(pay);
+            await getPayDebts();
         }
-    },
-    computed: {
-        debt() {
-            const debtStore = useStoreDebt();
-            debtStore.debt.users.map(p => { p.pay = 0; p.value = 0 })
-
-            for (let pay of debtStore.debt.pays) {
-                let payPart = pay.amount / pay.pay_for.length
-
-                const payB = debtStore.debt.users.filter(p => p.id === pay.pay_by.id);
-                let userPay = payB[0];
-                userPay.pay += pay.amount;
-                userPay.value += pay.amount;
-
-                for (let pf of pay.pay_for) {
-                    const pFor = debtStore.debt.users.filter(p => p.id === pf.user_id);
-                    let userPayFor = pFor[0];
-                    userPayFor.value -= payPart
-                }
-            }
-            return debtStore.debt;
-        },
-    },
-    data() {
-        return {
-            gastosSelector: false,
-            saldosSelector: true,
-            isVisible: false,
-            tittle: '',
-            isPaid: 0,
-            payBy: 0,
-            payFor: [],
-            importData: 0
-        }
-    },
-    components: {
-        UserCard,
-        PayCard,
-        PayModal
+        isVisible.value = false;
+    } catch (error) {
+        throw new Error(error.message)
     }
+};
+
+const getPayDebts = async () => {
+    const debtStore = useStoreDebt();
+    let getDebt = await debtService.getDebt(debtStore.debt_id)
+    getDebt.users.forEach(p => { p.pay = 0; p.value = 0 })
+
+    const userMap = getDebt.users.reduce((usrList, user) => {
+        usrList[user.id] = user;
+        return usrList;
+    }, {})
+
+    for (let pay of getDebt.pays) {
+        let payPart = pay.amount / pay.pay_for.length
+
+        let userPay = userMap[pay.pay_by.id];
+        userPay.pay += pay.amount;
+        userPay.value += pay.amount;
+
+        for (let pf of pay.pay_for) {
+            let userPayFor = userMap[pf.user_id];
+            userPayFor.value -= payPart
+        }
+    }
+    debt.value = getDebt;
 }
+
+onMounted(async () => {
+    getPayDebts();
+});
 
 </script>
 

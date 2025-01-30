@@ -22,13 +22,14 @@ const getDebt = async (id) => {
 
 const createPay = async (data) => {
     try {
-        const response = await axios.post(`${BACK_URL}/debt`, {
+        const response = await axios.post(`${BACK_URL}/pay`, {
             headers: {
                 'Content-Type': 'application/json',
             }, data
         });
         return response.data
     } catch (error) {
+        console.log(error);
         throw new Error(error.message);
     }
 }

@@ -82,7 +82,6 @@ export default {
             this.people.pop(participant)
         },
         addDebt(){
-
             const debt = {
                 name: this.title,
                 money: 0,
